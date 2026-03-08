@@ -6,21 +6,44 @@ ARCH=$(uname -m)
 
 echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
-# pacman -Syu --noconfirm PACKAGESHERE
+pacman -Syu --noconfirm \
+	cmake 		  \
+	glew 		  \
+	glu 		  \
+	jsoncpp 	  \
+	libxinerama   \
+	libmad 		  \
+	libjpeg-turbo \
+	libusb-compat \
+	nasm 		  \
+	pcre
 
 echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
-get-debloated-pkgs --add-common --prefer-nano
+get-debloated-pkgs --add-common --prefer-nano ffmpeg-mini
 
-# Comment this out if you need an AUR package
-#make-aur-package PACKAGENAME
+echo "Building ITGmania..."
+echo "---------------------------------------------------------------"
+REPO="https://github.com/itgmania/itgmania"
+if [ "${DEVEL_RELEASE-}" = 1 ]; then
+    echo "Making nightly build of ITGmania..."
+    echo "---------------------------------------------------------------"
+    VERSION="$(git ls-remote "$REPO" HEAD | cut -c 1-9 | head -1)"
+    git clone --branch beta --single-branch --recursive --depth 1 "$REPO" ./itgmania
+else
+	echo "Making stable build of ITGmania..."
+	VERSION="$(git ls-remote --tags --sort="v:refname" "$REPO" | tail -n1 | sed 's/.*\///; s/\^{}//; s/^v//')"
+	git clone --branch v"$VERSION" --single-branch --recursive --depth 1 "$REPO" ./itgmania
+fi
+echo "$VERSION" > ~/version
 
-# If the application needs to be manually built that has to be done down here
+mkdir -p ./AppDir/bin
+cmake -S ./itgmania -B build \
+    -DCMAKE_INSTALL_PREFIX=/opt \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DWITH_FULL_RELEASE=YES \
+    -DWITH_FFMPEG_JOBS=$(nproc)
+cmake --build build -j$(nproc)
+cmake --install build
 
-# if you also have to make nightly releases check for DEVEL_RELEASE = 1
-#
-# if [ "${DEVEL_RELEASE-}" = 1 ]; then
-# 	nightly build steps
-# else
-# 	regular build steps
-# fi
+find /opt/itgmania -mindepth 1 -maxdepth 1 -type d ! -name "itgmania" ! -name "itgmania.desktop" -exec mv {} ./AppDir/bin \;
