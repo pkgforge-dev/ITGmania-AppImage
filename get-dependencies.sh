@@ -25,4 +25,5 @@ make-aur-package "$package"
 pacman -Q "$package" | awk '{print $2; exit}' > ~/version
 
 mkdir -p ./AppDir/bin
-mv -v /opt/itgmania/* ./AppDir/bin
+#mv -v /opt/itgmania/* ./AppDir/bin
+find . -name . -o -type d -prune -o ! -name "itgmania" ! -name "itgmania.desktop" -exec mv {} ./AppDir/bin \;
