@@ -12,15 +12,13 @@ echo "Installing debloated packages..."
 echo "---------------------------------------------------------------"
 get-debloated-pkgs --add-common --prefer-nano
 
-# Comment this out if you need an AUR package
-#make-aur-package PACKAGENAME
+if [ "${DEVEL_RELEASE-}" = 1 ]; then
+	package=itgmania-git
+else
+	package=itgmania
+fi
+make-aur-package "$package"
+pacman -Q "$package" | awk '{print $2; exit}' > ~/version
 
-# If the application needs to be manually built that has to be done down here
-
-# if you also have to make nightly releases check for DEVEL_RELEASE = 1
-#
-# if [ "${DEVEL_RELEASE-}" = 1 ]; then
-# 	nightly build steps
-# else
-# 	regular build steps
-# fi
+mkdir -p ./AppDir/bin
+find /opt/itgmania -mindepth 1 -maxdepth 1 -type d ! -name "itgmania" ! -name "itgmania.desktop" -exec mv {} ./AppDir/bin \;
