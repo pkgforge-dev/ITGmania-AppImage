@@ -23,3 +23,6 @@ else
 fi
 make-aur-package "$package"
 pacman -Q "$package" | awk '{print $2; exit}' > ~/version
+
+mkdir -p ./AppDir/bin
+mv -v /opt/itgmania/* ./AppDir/bin
