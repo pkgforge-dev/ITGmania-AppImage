@@ -10,7 +10,7 @@ export ADD_HOOKS="self-updater.bg.hook"
 export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|*$ARCH.AppImage.zsync"
 export ICON=https://github.com/itgmania/itgmania/raw/refs/heads/release/Data/logo.svg
 export DESKTOP=/usr/share/applications/itgmania.desktop
-export STARTUPWMCLASS=
+export STARTUPWMCLASS=ITGmania
 export DEPLOY_OPENGL=1
 
 # Deploy dependencies
