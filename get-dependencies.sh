@@ -16,14 +16,13 @@ get-debloated-pkgs --add-common --prefer-nano
 #make-aur-package PACKAGENAME
 
 # If the application needs to be manually built that has to be done down here
-#if [ "${DEVEL_RELEASE-}" = 1 ]; then
+if [ "${DEVEL_RELEASE-}" = 1 ]; then
 	package=itgmania-git
-#else
-#	package=itgmania
-#fi
+else
+	package=itgmania
+fi
 make-aur-package "$package"
 pacman -Q "$package" | awk '{print $2; exit}' > ~/version
 
 mkdir -p ./AppDir/bin
-#mv -v /opt/itgmania/* ./AppDir/bin
 find /opt/itgmania -mindepth 1 -maxdepth 1 -type d ! -name "itgmania" ! -name "itgmania.desktop" -exec mv {} ./AppDir/bin \;
